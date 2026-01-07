@@ -2,20 +2,34 @@ package gui;
 
 import shared.MatchPool;
 import threads.MatchMakerThread;
-import threads.UserRole;
-import threads.UserThread;
+import db.SupabaseWorker;
+
+import javax.swing.*;
 
 public class MainApp {
 
+    private static MatchPool pool;
+
+    public static MatchPool getPool() {
+        return pool;
+    }
+
     public static void main(String[] args) {
 
-        MatchPool pool = new MatchPool();
-        MatchMakerThread matchMaker = new MatchMakerThread(pool);
-        matchMaker.start();
+        // Initialize shared match pool ONCE
+        pool = new MatchPool();
 
-        new UserThread("Isko-UPM", UserRole.STUDENT, pool).start();
-        new UserThread("Iska-UPD", UserRole.STUDENT, pool).start();
-        new UserThread("Prof-A", UserRole.PROFESSOR, pool).start();
-        new UserThread("Prof-B", UserRole.PROFESSOR, pool).start();
+        // Start matchmaker thread
+        new MatchMakerThread(pool).start();
+
+        // Start database worker
+        SupabaseWorker dbWorker = new SupabaseWorker();
+        dbWorker.start();
+
+        // Launch GUI
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame();
+            frame.setVisible(true);
+        });
     }
 }

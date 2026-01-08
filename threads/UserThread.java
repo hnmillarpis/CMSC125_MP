@@ -93,7 +93,7 @@ public class UserThread implements Runnable {
     }
 
 
-    // 🔒 CALLED ONLY BY MATCHMAKER
+    // CALLED ONLY BY MATCHMAKER
     public synchronized void setMatchedWith(UserThread other, ChatRoom room) {
         this.matchedWith = other;
         this.chatRoom = room;
